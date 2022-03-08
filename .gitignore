@@ -19,6 +19,7 @@
 
 # RStudio files
 .Rproj.user/
+therm_var_meta_analysis.Rproj
 
 # produced vignettes
 vignettes/*.html

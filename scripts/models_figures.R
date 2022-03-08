@@ -21,11 +21,11 @@ scopus <- read_csv("scopus_405.csv")
 comp<-inner_join(scopus,wos, by = "title")
 
 #studies that featured data in both analyses
-merge(dat_acclim_ES, dat_full_var_ES, by = "study_id") %>%
+merge(acclim, acute, by = "study_id") %>%
   count(study_id)
-count(dat_full_var_ES, environment, genus)
-count(dat_acclim_ES, environment, genus)
-count(dat_full_var_ES,  org_level,study_id)
+count(acute,environment,genus)
+count(acclim,environment,genus)
+count(acute,org_level,study_id)
 
 ##################################
 ############# MODELS #############
@@ -183,7 +183,7 @@ acclim_df <- data.frame(covariates=c("intrcpt",
                                      "relevel(as.factor(tpc_zone), ref = \"neutral\")low"),
                         SMD=c(0.75, 0.75, 0.75, 3,3))
 
-acclim_mod_estimate %>%
+acclim_coef_fig <-acclim_mod_estimate %>%
   ggplot()+
   geom_hline(yintercept = 0, linetype='dashed')+
   geom_errorbar(aes(x = factor(covariates, level = c("intrcpt", "I(flux_range - mean(flux_range))", 
@@ -216,7 +216,9 @@ acclim_mod_estimate %>%
   #ylim(-15,8)+
   coord_flip()+
   geom_text(data=acclim_df, aes(x=covariates, y=SMD), label = "*", color = "black", size = 6)+
-  theme_bw()
+  theme_bw()  
+
+ggsave("figure4.png", acclim_coef_fig, dpi=700, width=8, height=6)#saving to high res png
 
 ##acute coefficients
 #Figure 5
@@ -242,7 +244,7 @@ acute_df <- data.frame(covariates=c("I(flux_range - mean(flux_range)):I(mean_tem
                        SMD=c(0.25, 3))
 
 
-acute_mod_estimate %>%
+acute_coef_fig <- acute_mod_estimate %>%
   ggplot()+
   geom_hline(yintercept = 0, linetype='dashed')+
   geom_errorbar(aes(x = factor(covariates, level = c("intrcpt", "I(flux_range - mean(flux_range))", 
@@ -286,7 +288,7 @@ acute_mod_estimate %>%
   coord_flip()+
   geom_text(data=acute_df, aes(x=covariates, y=SMD), label = "*", color = "black", size = 6)+
   theme_bw()
-
+ggsave("figure5.png", acute_coef_fig, dpi=700, width=8, height=6)
 #Figure 6
 normalized_acclim <- acclim %>% filter(between(yi, -5, 5))
 normalized_acute <- acute  %>% filter(between(yi, -5, 5))
@@ -360,9 +362,8 @@ p_big <- subset_acclim + interaction_acclim
 #joining the acute plots 
 p_big2 <- subset_acute + interaction_acute
 #making the main text figure 
-p_big/p_big2
-
-
+interaction_fig <- p_big/p_big2
+ggsave("figure6.png", interaction_fig, dpi=700, width=10, height=9)
 
 ######SUPPLEMENTARY FIGURES#####
 #funnel plots 

@@ -1,0 +1,31 @@
+﻿decoding ,code,meaning,,,,,,,notes
+resp_id,,,,,,,,,unique response within study 
+study_id,,,,,,,,,author and year 
+org_level,"0,1,2,3","individual, population, community, ecosystem ",,,,,,,level of biological organization 
+flux_type,"0,1,2,3,4","constant, diurnal, red, white other",,,,,,,"the type of flucuation, constant=no variability in temp, diurnal=daily periodic fluctuation, white=stochastic manipulation of environmental color, red = autocorrelated manipulation of environmental color"
+flux_pattern,"0,1","pulse, ramping",,,,,,,abrupt temp range (pulse) or gradual (ramping)
+mean_temp,,,,,,,,,mean temperature (degrees C)
+period_flux,,,,,,,,,period of fluctuation (hours)
+resp_def,,,,,,,,,definition of experimental result 
+resp_units,,,,,,,,,units of response
+response,,,,,,,,,reported response value
+resp_quality ,"0,1","table, figure ",,,,,,,source of extracted value
+samp_size,,,,,,,,,individuals used in response value
+variance_type ,"0,1","SEM, std dev.",,,,,,,type of variance metrics
+variance ,,,,,,,,,value of respective variance metrics 
+genus,,,,,,,,,genus of organism 
+species ,,,,,,,,,species of organism 
+exp_age,"0,1,2","pre-juvenile, juvenile, adult?",,,,,,,experimental age class of organism
+size,"0,1,2,3","very small, small, medium, large ",,,,,,,size class of organism 
+add_covariate,,"species richness, ecosystem?",,,,,,,additional covariate description
+add_covariate_value ,,,,,,,,,value of additional covariate
+add_info,,,,,,,,,units of additional covariate
+extra_covariate ,,,,,,,,,second covariate description
+extra_value,,,,,,,,,value of second covariate
+add_info,,,,,,,,,units of second covariate
+environment,"aquatic, terrestrial ",,,,,,,,environment type where organism is from
+larger_group,"0,1,2,3","plant, animal, fungi, bacteria ",,,,,,,broader classifications of organisms above order/genus/species 
+time_point ,,,,,,,,,days into epxeriment response was recorded 
+time_units,,,,,,,,,time point units
+stressful,"y, n","yes, no",,,,,,,whether or not temperature was thermally stressful 
+same_mean,"y, n","yes, no",,,,,,,if the constant and fluctuatin treatments had the same mean (within 1 C difference)

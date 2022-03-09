@@ -3,13 +3,13 @@
 #####################################################
 ##loading libraries 
 pacman::p_load(metafor, tidyverse, viridis, visreg, forcats, 
-               devtools, patchwork)
+               devtools, patchwork, MuMIn)
 
 #load data
 acclim <- read_csv("data/acclim_cleaned.csv")%>%
   mutate(environment=as.factor(environment), size=as.factor(size), 
          exp_age=as.factor(exp_age), tpc_zone = as.factor(tpc_zone))
-  
+
 acute <- read_csv("data/acute_cleaned.csv")%>%
   mutate(metric= as.factor(metric), environment=as.factor(environment), size=as.factor(size), 
          exp_age=as.factor(exp_age), org_level=as.factor(org_level))
@@ -31,6 +31,108 @@ count(acute,org_level,study_id)
 ############# MODELS #############
 ##################################
 
+##ACCLIMATION
+#model selection: sequentially adding in moderators to see if they improve AICc by more than 2
+acclim_full<-rma.mv(yi, vi, data=acclim, 
+                 mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
+                 +relevel(as.factor(tpc_zone), ref = "neutral") +relevel(as.factor(exp_age), ref="1")
+                 +relevel(as.factor(size), ref="1") +environment, 
+                 random = ~1 |  study_id/unique_species/response_id,
+                 method="ML") 
+
+eval(metafor:::.MuMIn)
+acclim_dredge <- dredge(acclim_full, trace=2)
+acclim_subset_mod <- as.data.frame(subset(acclim_dredge, delta <=5))%>%
+  rename(int=`(Intercept)`, 
+         flux_range = `I(flux_range - mean(flux_range))`,
+         mean_temp = `I(mean_temp_reared - mean(mean_temp_reared))`, 
+         age = `relevel(as.factor(exp_age), ref = "1")`, 
+         size = `relevel(as.factor(size), ref = "1")`, 
+         tpc_zone = `relevel(as.factor(tpc_zone), ref = "neutral")`, 
+         temp_interac = `I(flux_range - mean(flux_range)):I(mean_temp_reared - mean(mean_temp_reared))`)
+
+acclim_subset_CI <- as.data.frame(subset(acclim_dredge, cumsum(weight) <= .95))%>%
+  rename(int=`(Intercept)`, 
+         flux_range = `I(flux_range - mean(flux_range))`,
+         mean_temp = `I(mean_temp_reared - mean(mean_temp_reared))`, 
+         age = `relevel(as.factor(exp_age), ref = "1")`, 
+         size = `relevel(as.factor(size), ref = "1")`, 
+         toc_zone = `relevel(as.factor(tpc_zone), ref = "neutral")`, 
+         temp_interac = `I(flux_range - mean(flux_range)):I(mean_temp_reared - mean(mean_temp_reared))`)
+
+
+
+
+
+
+#best model by AIC 
+acclim_best<-rma.mv(yi, vi, data=acclim, 
+                     mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
+                     +relevel(as.factor(tpc_zone), ref = "neutral") +relevel(as.factor(exp_age), ref="1")
+                    +relevel(as.factor(size), ref="1") +environment, 
+                     random = ~1 |  study_id/unique_species/response_id,
+                     method="ML") 
+
+##ACUTE 
+#model selection: sequentially adding in moderators to see if they improve AICc by more than 2
+acute_full <- rma.mv(yi, vi, data=acute, 
+                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                  +environment +relevel(as.factor(size), ref="1") +
+                    relevel(as.factor(metric), ref="energetics") +relevel(as.factor(exp_age), ref="1") + as.factor(org_level),
+                  random = ~1 | study_id/species/response_id,
+                  method="ML") 
+
+eval(metafor:::.MuMIn)
+acute_dredge <- dredge(acute_full, trace=2)
+acute_subset_mod <- as.data.frame(subset(acute_dredge, delta <=2)) %>%
+  rename(int=`(Intercept)`, 
+         org_level = `as.factor(org_level)`, 
+         flux_range = `I(flux_range - mean(flux_range))`,
+         mean_temp = `I(mean_temp_constant - mean(mean_temp_constant))`, 
+         age = `relevel(as.factor(exp_age), ref = "1")`, 
+         size = `relevel(as.factor(size), ref = "1")`, 
+         metric = `relevel(as.factor(metric), ref = "energetics")`, 
+         temp_interac = `I(flux_range - mean(flux_range)):I(mean_temp_constant - mean(mean_temp_constant))`)
+
+acute_subset_CI <- as.data.frame(subset(acute_dredge, cumsum(weight) <= .95)) %>%
+  rename(int=`(Intercept)`, 
+         org_level = `as.factor(org_level)`, 
+         flux_range = `I(flux_range - mean(flux_range))`,
+         mean_temp = `I(mean_temp_constant - mean(mean_temp_constant))`, 
+         age = `relevel(as.factor(exp_age), ref = "1")`, 
+         size = `relevel(as.factor(size), ref = "1")`, 
+         metric = `relevel(as.factor(metric), ref = "energetics")`, 
+         temp_interac = `I(flux_range - mean(flux_range)):I(mean_temp_constant - mean(mean_temp_constant))`)
+
+
+summary(get.models(acclim_dredge, 1)[[1]])
+summary(model.avg(acclim_dredge, subset = cumsum(weight) <= .95))
+confint(model.avg(acclim_dredge, subset = cumsum(weight) <= .95))
+zn_CI_average <- rownames_to_column(as.data.frame(confint(model.avg(acclim_dredge, subset = cumsum(weight) <= .95))), var = "term")
+zn_slopes_average <- enframe(coef(model.avg(acclim_dredge, subset = cumsum(weight) <= .95)), name = "term", value = "slope")
+
+zn_mod_out <- left_join(zn_CI_average, zn_slopes_average) %>% 
+  rename(conf.low = `2.5 %`,
+         conf.high = `97.5 %`) %>% 
+  filter(term != "(Intercept)") %>% 
+  arrange(desc(slope)) 
+
+ggplot(data = zn_mod_out, aes(x = term, y = slope)) + geom_point(size = 3) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2) + 
+  geom_hline(yintercept = 0) + coord_flip()
+
+
+
+
+#best model -- organization level doesn't improve AIC by more than 2
+acute_best <- rma.mv(yi, vi, data=acute, 
+                      mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                      +environment +relevel(as.factor(size), ref="1") +
+                       relevel(as.factor(metric), ref="energetics") +relevel(as.factor(exp_age), ref="1"),
+                      random = ~1 | study_id/species/response_id,
+                      method="REML") 
+
+#################################################################
 ##ACCLIMATION
 #model selection: sequentially adding in moderators to see if they improve AICc by more than 2
 
@@ -76,11 +178,11 @@ AICc(acclim_int, acclim_1, acclim_2, acclim_3, acclim_4, acclim_5, acclim_6, acc
 
 #best model by AIC 
 acclim_best<-rma.mv(yi, vi, data=acclim, 
-                     mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
-                     +relevel(as.factor(tpc_zone), ref = "neutral") +relevel(as.factor(exp_age), ref="1")
+                    mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
+                    +relevel(as.factor(tpc_zone), ref = "neutral") +relevel(as.factor(exp_age), ref="1")
                     +relevel(as.factor(size), ref="1") +environment, 
-                     random = ~1 |  study_id/unique_species/response_id,
-                     method="REML") 
+                    random = ~1 |  study_id/unique_species/response_id,
+                    method="REML") 
 
 ##ACUTE 
 #model selection: sequentially adding in moderators to see if they improve AICc by more than 2
@@ -131,13 +233,8 @@ acute_8 <- rma.mv(yi, vi, data=acute,
 
 AICc(acute_int, acute_1, acute_2, acute_3, acute_4, acute_5, acute_6, acute_7, acute_8)
 
-#best model -- organization level doesn't improve AIC by more than 2
-acute_best <- rma.mv(yi, vi, data=acute, 
-                      mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
-                      +environment +relevel(as.factor(size), ref="1") +
-                       relevel(as.factor(metric), ref="energetics") +relevel(as.factor(exp_age), ref="1"),
-                      random = ~1 | study_id/species/response_id,
-                      method="REML") 
+#################################################################
+
 
 
 #I2 calculations from best models 

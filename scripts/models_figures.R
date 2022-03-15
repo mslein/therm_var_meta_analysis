@@ -32,105 +32,8 @@ count(acute,org_level,study_id)
 ##################################
 
 ##ACCLIMATION
-#model selection: sequentially adding in moderators to see if they improve AICc by more than 2
-acclim_full<-rma.mv(yi, vi, data=acclim, 
-                 mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
-                 +relevel(as.factor(tpc_zone), ref = "neutral") +relevel(as.factor(exp_age), ref="1")
-                 +relevel(as.factor(size), ref="1") +environment, 
-                 random = ~1 |  study_id/unique_species/response_id,
-                 method="ML") 
-
-eval(metafor:::.MuMIn)
-acclim_dredge <- dredge(acclim_full, trace=2)
-acclim_subset_mod <- as.data.frame(subset(acclim_dredge, delta <=5))%>%
-  rename(int=`(Intercept)`, 
-         flux_range = `I(flux_range - mean(flux_range))`,
-         mean_temp = `I(mean_temp_reared - mean(mean_temp_reared))`, 
-         age = `relevel(as.factor(exp_age), ref = "1")`, 
-         size = `relevel(as.factor(size), ref = "1")`, 
-         tpc_zone = `relevel(as.factor(tpc_zone), ref = "neutral")`, 
-         temp_interac = `I(flux_range - mean(flux_range)):I(mean_temp_reared - mean(mean_temp_reared))`)
-
-acclim_subset_CI <- as.data.frame(subset(acclim_dredge, cumsum(weight) <= .95))%>%
-  rename(int=`(Intercept)`, 
-         flux_range = `I(flux_range - mean(flux_range))`,
-         mean_temp = `I(mean_temp_reared - mean(mean_temp_reared))`, 
-         age = `relevel(as.factor(exp_age), ref = "1")`, 
-         size = `relevel(as.factor(size), ref = "1")`, 
-         toc_zone = `relevel(as.factor(tpc_zone), ref = "neutral")`, 
-         temp_interac = `I(flux_range - mean(flux_range)):I(mean_temp_reared - mean(mean_temp_reared))`)
-
-
-
-
-
-
+#model selection: adding in moderators to see if they improve AICc by more than 2
 #best model by AIC 
-acclim_best<-rma.mv(yi, vi, data=acclim, 
-                     mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
-                     +relevel(as.factor(tpc_zone), ref = "neutral") +relevel(as.factor(exp_age), ref="1")
-                    +relevel(as.factor(size), ref="1") +environment, 
-                     random = ~1 |  study_id/unique_species/response_id,
-                     method="ML") 
-
-##ACUTE 
-#model selection: sequentially adding in moderators to see if they improve AICc by more than 2
-acute_full <- rma.mv(yi, vi, data=acute, 
-                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
-                  +environment +relevel(as.factor(size), ref="1") +
-                    relevel(as.factor(metric), ref="energetics") +relevel(as.factor(exp_age), ref="1") + as.factor(org_level),
-                  random = ~1 | study_id/species/response_id,
-                  method="ML") 
-
-eval(metafor:::.MuMIn)
-acute_dredge <- dredge(acute_full, trace=2)
-acute_subset_mod <- as.data.frame(subset(acute_dredge, delta <=2)) %>%
-  rename(int=`(Intercept)`, 
-         org_level = `as.factor(org_level)`, 
-         flux_range = `I(flux_range - mean(flux_range))`,
-         mean_temp = `I(mean_temp_constant - mean(mean_temp_constant))`, 
-         age = `relevel(as.factor(exp_age), ref = "1")`, 
-         size = `relevel(as.factor(size), ref = "1")`, 
-         metric = `relevel(as.factor(metric), ref = "energetics")`, 
-         temp_interac = `I(flux_range - mean(flux_range)):I(mean_temp_constant - mean(mean_temp_constant))`)
-
-acute_subset_CI <- as.data.frame(subset(acute_dredge, cumsum(weight) <= .95)) %>%
-  rename(int=`(Intercept)`, 
-         org_level = `as.factor(org_level)`, 
-         flux_range = `I(flux_range - mean(flux_range))`,
-         mean_temp = `I(mean_temp_constant - mean(mean_temp_constant))`, 
-         age = `relevel(as.factor(exp_age), ref = "1")`, 
-         size = `relevel(as.factor(size), ref = "1")`, 
-         metric = `relevel(as.factor(metric), ref = "energetics")`, 
-         temp_interac = `I(flux_range - mean(flux_range)):I(mean_temp_constant - mean(mean_temp_constant))`)
-
-
-summary(get.models(acclim_dredge, 1)[[1]])
-summary(model.avg(acclim_dredge, subset = cumsum(weight) <= .95))
-confint(model.avg(acclim_dredge, subset = cumsum(weight) <= .95))
-zn_CI_average <- rownames_to_column(as.data.frame(confint(model.avg(acclim_dredge, subset = cumsum(weight) <= .95))), var = "term")
-zn_slopes_average <- enframe(coef(model.avg(acclim_dredge, subset = cumsum(weight) <= .95)), name = "term", value = "slope")
-
-zn_mod_out <- left_join(zn_CI_average, zn_slopes_average) %>% 
-  rename(conf.low = `2.5 %`,
-         conf.high = `97.5 %`) %>% 
-  filter(term != "(Intercept)") %>% 
-  arrange(desc(slope)) 
-
-ggplot(data = zn_mod_out, aes(x = term, y = slope)) + geom_point(size = 3) +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2) + 
-  geom_hline(yintercept = 0) + coord_flip()
-
-
-
-
-#best model -- organization level doesn't improve AIC by more than 2
-acute_best <- rma.mv(yi, vi, data=acute, 
-                      mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
-                      +environment +relevel(as.factor(size), ref="1") +
-                       relevel(as.factor(metric), ref="energetics") +relevel(as.factor(exp_age), ref="1"),
-                      random = ~1 | study_id/species/response_id,
-                      method="REML") 
 
 #################################################################
 ##ACCLIMATION
@@ -138,44 +41,131 @@ acute_best <- rma.mv(yi, vi, data=acute,
 
 acclim_int<-rma.mv(yi, vi, data=acclim, 
                    random = ~1 |  study_id/unique_species/response_id,
-                   method="REML") 
+                   method="REML")
+#temp
 acclim_1<-rma.mv(yi, vi, data=acclim, 
-                 mods = ~ I(flux_range-mean(flux_range)) , 
-                 random = ~1 |  study_id/unique_species/response_id,
-                 method="REML") 
-acclim_2<-rma.mv(yi, vi, data=acclim, 
-                 mods = ~ I(flux_range-mean(flux_range)) + I(mean_temp_reared-mean(mean_temp_reared)), 
-                 random = ~1 |  study_id/unique_species/response_id,
-                 method="REML") 
-acclim_3<-rma.mv(yi, vi, data=acclim, 
                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)), 
                  random = ~1 |  study_id/unique_species/response_id,
                  method="REML") 
-acclim_4<-rma.mv(yi, vi, data=acclim, 
+#tpc zone + temp
+acclim_2<-rma.mv(yi, vi, data=acclim, 
                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
                  +relevel(as.factor(tpc_zone), ref = "neutral"), 
                  random = ~1 |  study_id/unique_species/response_id,
-                 method="REML") 
+                 method="REML")
+#age + temp
+acclim_3<-rma.mv(yi, vi, data=acclim, 
+                 mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
+                 +relevel(as.factor(exp_age), ref="1"), 
+                 random = ~1 |  study_id/unique_species/response_id,
+                 method="REML")
+#size + temp
+acclim_4<-rma.mv(yi, vi, data=acclim, 
+                 mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
+                 +relevel(as.factor(size), ref="1"), 
+                 random = ~1 |  study_id/unique_species/response_id,
+                 method="REML")
+#environment + temp
 acclim_5<-rma.mv(yi, vi, data=acclim, 
+                 mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
+                 +environment, 
+                 random = ~1 |  study_id/unique_species/response_id,
+                 method="REML")
+#size + tpc zone + temp
+acclim_6<-rma.mv(yi, vi, data=acclim, 
+                 mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
+                 +relevel(as.factor(tpc_zone), ref = "neutral") +relevel(as.factor(size), ref="1"), 
+                 random = ~1 |  study_id/unique_species/response_id,
+                 method="REML") 
+#tpc zone + age + temp
+acclim_7<-rma.mv(yi, vi, data=acclim, 
                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
                  +relevel(as.factor(tpc_zone), ref = "neutral") +relevel(as.factor(exp_age), ref="1"), 
                  random = ~1 |  study_id/unique_species/response_id,
+                 method="REML")
+#tpc zone + environment + temp
+acclim_8<-rma.mv(yi, vi, data=acclim, 
+                 mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
+                 +relevel(as.factor(tpc_zone), ref = "neutral") +environment, 
+                 random = ~1 |  study_id/unique_species/response_id,
+                 method="REML")
+#age + size + temp
+acclim_9<-rma.mv(yi, vi, data=acclim, 
+                 mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
+                 +relevel(as.factor(exp_age), ref="1") +relevel(as.factor(size), ref="1"), 
+                 random = ~1 |  study_id/unique_species/response_id,
                  method="REML") 
-acclim_6<-rma.mv(yi, vi, data=acclim, 
+#size + environment + temp
+acclim_9<-rma.mv(yi, vi, data=acclim, 
+                 mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
+                 +environment +relevel(as.factor(size), ref="1"), 
+                 random = ~1 |  study_id/unique_species/response_id,
+                 method="REML") 
+#environment + age + temp
+acclim_10<-rma.mv(yi, vi, data=acclim, 
+                 mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
+                 +environment +relevel(as.factor(exp_age), ref="1"), 
+                 random = ~1 |  study_id/unique_species/response_id,
+                 method="REML")
+#tpc zone + size + age + temp
+acclim_11<-rma.mv(yi, vi, data=acclim, 
                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
                  +relevel(as.factor(tpc_zone), ref = "neutral") +relevel(as.factor(exp_age), ref="1")
                  +relevel(as.factor(size), ref="1"), 
                  random = ~1 |  study_id/unique_species/response_id,
                  method="REML") 
-acclim_7<-rma.mv(yi, vi, data=acclim, 
+#tpc zone + size + environment + temp 
+acclim_12<-rma.mv(yi, vi, data=acclim, 
+                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
+                  +relevel(as.factor(tpc_zone), ref = "neutral") +relevel(as.factor(size), ref="1") 
+                  +environment, 
+                  random = ~1 |  study_id/unique_species/response_id,
+                  method="REML") 
+#age + size + environment + temp 
+acclim_13<-rma.mv(yi, vi, data=acclim, 
+                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
+                  +relevel(as.factor(exp_age), ref="1") +relevel(as.factor(size), ref="1")
+                  +environment, 
+                  random = ~1 |  study_id/unique_species/response_id,
+                  method="REML") 
+#tpc zone + age + environment + temp
+acclim_14<-rma.mv(yi, vi, data=acclim, 
+                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
+                  +relevel(as.factor(tpc_zone), ref = "neutral") +relevel(as.factor(exp_age), ref="1")
+                  +environment, 
+                  random = ~1 |  study_id/unique_species/response_id,
+                  method="REML") 
+#tpc zone + age + size + environment + temp 
+acclim_15<-rma.mv(yi, vi, data=acclim, 
                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
                  +relevel(as.factor(tpc_zone), ref = "neutral") +relevel(as.factor(exp_age), ref="1")
                  +relevel(as.factor(size), ref="1") +environment, 
                  random = ~1 |  study_id/unique_species/response_id,
                  method="REML") 
 
-AICc(acclim_int, acclim_1, acclim_2, acclim_3, acclim_4, acclim_5, acclim_6, acclim_7)
-
+#generating stats for table s3
+#getting aic and df for each model
+AIC<-AICc(acclim_int, acclim_1, acclim_2, acclim_3, acclim_4, acclim_5, acclim_6, acclim_7,acclim_8,
+     acclim_9, acclim_10, acclim_11, acclim_12, acclim_13, acclim_14, acclim_15) %>%
+  mutate(deltaAICc = AICc - min(AICc))
+#getting loglikelihood from each model
+log_like <- c((logLik(acclim_int)[1]), (logLik(acclim_1)[1]),
+              (logLik(acclim_2)[1]),(logLik(acclim_3)[1]),
+                      (logLik(acclim_4)[1]),(logLik(acclim_5)[1]), 
+                      (logLik(acclim_6)[1]),(logLik(acclim_7)[1]), 
+                   (logLik(acclim_8)[1]), (logLik(acclim_9)[1]), 
+                   (logLik(acclim_10)[1]),(logLik(acclim_11)[1]),
+                   (logLik(acclim_12)[1]),(logLik(acclim_13)[1]), 
+                   (logLik(acclim_14)[1]),(logLik(acclim_15)[1])) %>%
+  as.data.frame() %>%
+  rename(loglike= ".")
+#cleaned table with aic, df, and loglik all together
+acclim_stats <- cbind(AIC, log_like)%>%
+  mutate(k=332, 
+         model = c(0:15)) %>%
+  arrange(desc(deltaAICc)) %>%
+  round(digits=3)
+write.csv(acclim_stats, "acclim_stats.csv", row.names = F)
 #best model by AIC 
 acclim_best<-rma.mv(yi, vi, data=acclim, 
                     mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_reared-mean(mean_temp_reared)) 
@@ -184,55 +174,248 @@ acclim_best<-rma.mv(yi, vi, data=acclim,
                     random = ~1 |  study_id/unique_species/response_id,
                     method="REML") 
 
+
 ##ACUTE 
 #model selection: sequentially adding in moderators to see if they improve AICc by more than 2
 acute_int <- rma.mv(yi, vi, data=acute,
                     random = ~1 | study_id/species/response_id,
                     method="REML") 
+#temp
 acute_1 <- rma.mv(yi, vi, data=acute, 
-                  mods = ~ I(flux_range-mean(flux_range)),
-                  random = ~1 | study_id/species/response_id,
-                  method="REML") 
-acute_2 <- rma.mv(yi, vi, data=acute, 
-                  mods = ~ I(flux_range-mean(flux_range)) + I(mean_temp_constant-mean(mean_temp_constant)),
-                  random = ~1 | study_id/species/response_id,
-                  method="REML") 
-acute_3 <- rma.mv(yi, vi, data=acute, 
                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant)),
                   random = ~1 | study_id/species/response_id,
                   method="REML") 
+#size +temp
+acute_2 <- rma.mv(yi, vi, data=acute, 
+                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                  +relevel(as.factor(size), ref="1"),
+                  random = ~1 | study_id/species/response_id,
+                  method="REML") 
+#metric +temp
+acute_3 <- rma.mv(yi, vi, data=acute, 
+                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                  +relevel(as.factor(metric), ref="energetics"),
+                  random = ~1 | study_id/species/response_id,
+                  method="REML") 
+#age +temp
 acute_4 <- rma.mv(yi, vi, data=acute, 
+                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                  +relevel(as.factor(exp_age), ref="1"),
+                  random = ~1 | study_id/species/response_id,
+                  method="REML") 
+#org level +temp
+acute_5 <- rma.mv(yi, vi, data=acute, 
+                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                  +as.factor(org_level),
+                  random = ~1 | study_id/species/response_id,
+                  method="REML") 
+#environment +temp
+acute_6 <- rma.mv(yi, vi, data=acute, 
                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
                   +environment,
                   random = ~1 | study_id/species/response_id,
                   method="REML") 
-acute_5 <- rma.mv(yi, vi, data=acute, 
-                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
-                  +environment +relevel(as.factor(size), ref="1"),
-                  random = ~1 | study_id/species/response_id,
-                  method="REML") 
-acute_6<- rma.mv(yi, vi, data=acute, 
-                 mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
-                 +environment +relevel(as.factor(size), ref="1") +
-                   relevel(as.factor(metric), ref="energetics"),
-                 random = ~1 | study_id/species/response_id,
-                 method="REML") 
+
+#age + environment +temp
 acute_7 <- rma.mv(yi, vi, data=acute, 
                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
-                  +environment +relevel(as.factor(size), ref="1") +
-                    relevel(as.factor(metric), ref="energetics") +relevel(as.factor(exp_age), ref="1"),
+                  +environment +relevel(as.factor(exp_age), ref="1"),
                   random = ~1 | study_id/species/response_id,
                   method="REML") 
-
+#org + age  +temp
 acute_8 <- rma.mv(yi, vi, data=acute, 
+                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                  +as.factor(org_level) +relevel(as.factor(exp_age), ref="1"),
+                  random = ~1 | study_id/species/response_id,
+                  method="REML") 
+#size + age  +temp
+acute_9 <- rma.mv(yi, vi, data=acute, 
+                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                  +relevel(as.factor(size), ref="1") +relevel(as.factor(exp_age), ref="1"),
+                  random = ~1 | study_id/species/response_id,
+                  method="REML") 
+#metric + age  +temp
+acute_10 <- rma.mv(yi, vi, data=acute, 
+                  mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                  +relevel(as.factor(metric), ref="energetics") +relevel(as.factor(exp_age), ref="1"),
+                  random = ~1 | study_id/species/response_id,
+                  method="REML") 
+#metric + size  +temp
+acute_11 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +relevel(as.factor(metric), ref="energetics") +relevel(as.factor(size), ref="1"),
+                   random = ~1 | study_id/species/response_id,
+                   method="REML") 
+#environment + size  +temp
+acute_12 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +environment +relevel(as.factor(size), ref="1"),
+                   random = ~1 | study_id/species/response_id,
+                   method="REML") 
+#org + size  +temp
+acute_13 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +as.factor(org_level) +relevel(as.factor(size), ref="1"),
+                   random = ~1 | study_id/species/response_id,
+                   method="REML") 
+#environment + org  +temp
+acute_14 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +environment +as.factor(org_level),
+                   random = ~1 | study_id/species/response_id,
+                   method="REML") 
+#metric + org  +temp
+acute_15 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +relevel(as.factor(metric), ref="energetics") +as.factor(org_level),
+                   random = ~1 | study_id/species/response_id,
+                   method="REML")
+#metric + environment  +temp
+acute_16 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +relevel(as.factor(metric), ref="energetics") +environment,
+                   random = ~1 | study_id/species/response_id,
+                   method="REML")
+#size + age + environment  +temp
+#convergence error; modified convergence
+acute_17 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +relevel(as.factor(size), ref="1") +relevel(as.factor(exp_age), ref="1") +environment,
+                   random = ~1 | study_id/species/response_id,
+                  control = list(optimizer="optim", optmethod="Nelder-Mead"))
+#size + age + metric  +temp
+acute_18 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +relevel(as.factor(size), ref="1") +relevel(as.factor(exp_age), ref="1") +relevel(as.factor(metric), ref="energetics"),
+                   random = ~1 | study_id/species/response_id,
+                   method="REML")
+#size + age + org  +temp
+acute_19 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +relevel(as.factor(size), ref="1") +relevel(as.factor(exp_age), ref="1") +as.factor(org_level),
+                   random = ~1 | study_id/species/response_id,
+                   method="REML")
+#size + environment + org +temp
+acute_20 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +relevel(as.factor(size), ref="1") +environment +as.factor(org_level),
+                   random = ~1 | study_id/species/response_id,
+                   method="REML")
+#size + environment + metric  +temp
+acute_21 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +relevel(as.factor(size), ref="1") +environment +relevel(as.factor(metric), ref="energetics"),
+                   random = ~1 | study_id/species/response_id,
+                   method="REML")
+# age + environment + metric  +temp
+acute_22 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +relevel(as.factor(exp_age), ref="1") +environment +relevel(as.factor(metric), ref="energetics"),
+                   random = ~1 | study_id/species/response_id,
+                   method="REML")
+# age + environment + org +temp
+acute_23 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +relevel(as.factor(exp_age), ref="1") +as.factor(org_level) +environment,
+                   random = ~1 | study_id/species/response_id,
+                   method="REML")
+# age + org + metric  +temp
+acute_24 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +relevel(as.factor(exp_age), ref="1") +as.factor(org_level) +relevel(as.factor(metric), ref="energetics"),
+                   random = ~1 | study_id/species/response_id,
+                   method="REML")
+# size + metric + org +temp
+acute_25 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +relevel(as.factor(size), ref="1") +as.factor(org_level) +relevel(as.factor(metric), ref="energetics"),
+                   random = ~1 | study_id/species/response_id,
+                   method="REML")
+# age + size + environment + metric  +temp
+acute_26 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +relevel(as.factor(size), ref="1") +relevel(as.factor(exp_age), ref="1") +environment
+                   +relevel(as.factor(metric), ref="energetics"),
+                   random = ~1 | study_id/species/response_id,
+                   method="REML")
+# age + size + environment + org  +temp
+acute_27 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +relevel(as.factor(size), ref="1") +relevel(as.factor(exp_age), ref="1") +environment
+                   +as.factor(org_level),
+                   random = ~1 | study_id/species/response_id,
+                   method="REML")
+# age + environment + metric + org  +temp
+acute_28 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +environment +relevel(as.factor(exp_age), ref="1") +relevel(as.factor(metric), ref="energetics")
+                   +as.factor(org_level),
+                   random = ~1 | study_id/species/response_id,
+                   method="REML")
+# age + size + metric + org  +temp
+acute_29 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +relevel(as.factor(size), ref="1") +relevel(as.factor(exp_age), ref="1") 
+                   +relevel(as.factor(metric), ref="energetics")
+                   +as.factor(org_level),
+                   random = ~1 | study_id/species/response_id,
+                   method="REML")
+# size + environment + metric + org  +temp
+acute_30 <- rma.mv(yi, vi, data=acute, 
+                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                   +relevel(as.factor(size), ref="1") +environment
+                   +relevel(as.factor(metric), ref="energetics")
+                   +as.factor(org_level),
+                   random = ~1 | study_id/species/response_id,
+                   method="REML")
+# size + environment + metric + org  +temp + org_level
+acute_31 <- rma.mv(yi, vi, data=acute, 
                   mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
                   +environment +relevel(as.factor(size), ref="1") +
                     relevel(as.factor(metric), ref="energetics") +relevel(as.factor(exp_age), ref="1") + as.factor(org_level),
                   random = ~1 | study_id/species/response_id,
                   method="REML") 
+#generating stats for table s4
+#getting aic and df for each model
+AIC_acute<-AICc(acute_int, acute_1, acute_2, acute_3, acute_4, acute_5, acute_6, acute_7, acute_8, 
+                acute_9, acute_10, acute_11, acute_12, acute_13, acute_14, acute_15, acute_16, acute_17,
+                acute_18, acute_19, acute_20, acute_21, acute_22, acute_23, acute_24, acute_25, acute_26, 
+                acute_27, acute_28, acute_29, acute_30, acute_31) %>%
+  mutate(deltaAICc = AICc - min(AICc))
+#getting loglikelihood from each model
+log_like_acute <- c((logLik(acute_int)[1]), (logLik(acute_1)[1]),
+              (logLik(acute_2)[1]),(logLik(acute_3)[1]),
+              (logLik(acute_4)[1]),(logLik(acute_5)[1]), 
+              (logLik(acute_6)[1]),(logLik(acute_7)[1]), 
+              (logLik(acute_8)[1]), (logLik(acute_9)[1]), 
+              (logLik(acute_10)[1]),(logLik(acute_11)[1]),
+              (logLik(acute_12)[1]),(logLik(acute_13)[1]), 
+              (logLik(acute_14)[1]),(logLik(acclim_15)[1]), 
+              (logLik(acute_16)[1]), (logLik(acute_17)[1]), 
+              (logLik(acute_18)[1]), (logLik(acute_19)[1]), 
+              (logLik(acute_20)[1]), (logLik(acute_21)[1]), 
+              (logLik(acute_22)[1]), (logLik(acute_23)[1]), 
+              (logLik(acute_24)[1]), (logLik(acute_25)[1]), 
+              (logLik(acute_26)[1]), (logLik(acute_27)[1]), 
+              (logLik(acute_28)[1]), (logLik(acute_29)[1]), 
+              (logLik(acute_30)[1]), (logLik(acute_31)[1])) %>%
+  as.data.frame() %>%
+  rename(loglike= ".") 
+#cleaned table with aic, df, and loglik all together
+acute_stats <- cbind(AIC_acute, log_like_acute)%>%
+  mutate(k=366, 
+         model = c(0:31)) %>%
+  arrange(desc(deltaAICc)) %>%
+  round(digits=3)
+write.csv(acute_stats, "acute_stats.csv",row.names = F)
 
-AICc(acute_int, acute_1, acute_2, acute_3, acute_4, acute_5, acute_6, acute_7, acute_8)
-
+#best acute model by AIC
+acute_best <- rma.mv(yi, vi, data=acute, 
+                     mods = ~ I(flux_range-mean(flux_range)) * I(mean_temp_constant-mean(mean_temp_constant))
+                     +environment +relevel(as.factor(size), ref="1") +
+                       relevel(as.factor(metric), ref="energetics") +relevel(as.factor(exp_age), ref="1") + as.factor(org_level),
+                     random = ~1 | study_id/species/response_id,
+                     method="REML") 
 #################################################################
 
 
@@ -334,6 +517,7 @@ acute_mod_estimate<- as.data.frame(coef(summary(acute_best))) %>%
                                             "I(mean_temp_constant - mean(mean_temp_constant))",
                                             "I(flux_range - mean(flux_range)):I(mean_temp_constant - mean(mean_temp_constant))") ~ "Temperature", 
                           covariates %in% c("environmentterrestrial") ~ "Environment", 
+                          covariates %in% c("as.factor(org_level)1") ~ "Organization level",
                           TRUE ~ "Intercept"))
 
 acute_df <- data.frame(covariates=c("I(flux_range - mean(flux_range)):I(mean_temp_constant - mean(mean_temp_constant))", 
@@ -356,7 +540,8 @@ acute_coef_fig <- acute_mod_estimate %>%
                                                      'relevel(as.factor(exp_age), ref = "1")2', 
                                                      'relevel(as.factor(size), ref = "1")0', 
                                                      'relevel(as.factor(size), ref = "1")2', 
-                                                     'relevel(as.factor(size), ref = "1")3', "environmentterrestrial")), 
+                                                     'relevel(as.factor(size), ref = "1")3', "environmentterrestrial", 
+                                                     "as.factor(org_level)1")), 
                     y=SMD, ymin=ci.lb, ymax=ci.ub), width=.2)+
   geom_point(aes(x=covariates, y=SMD, fill = SMD>0), size = 6, show.legend = FALSE, pch=21)+
   scale_fill_manual(values= c("violetred4", "rosybrown1"))+
@@ -372,13 +557,15 @@ acute_coef_fig <- acute_mod_estimate %>%
                             'relevel(as.factor(exp_age), ref = "1")2', 
                             'relevel(as.factor(size), ref = "1")0', 
                             'relevel(as.factor(size), ref = "1")2', 
-                            'relevel(as.factor(size), ref = "1")3', "environmentterrestrial"),
+                            'relevel(as.factor(size), ref = "1")3', "environmentterrestrial", 
+                            'as.factor(org_level)1'),
                    labels=c("Intercept", "Fluctuation range", 
                             "Mean temperature", "Mean temperature:Fluctuation range", "Metric Biochemistry",
                             "Metric Development", "Metric Fecundity", 
                             "Metric Size", "Metric Survivorship",
                             "Experimental age Class 0", "Experimental age Class 2", 
-                            "Size Class 0","Size Class 2", "Size Class 3", "Environment Terrestrial"))+
+                            "Size Class 0","Size Class 2", "Size Class 3", "Environment Terrestrial", 
+                            "Organization Level 1"))+
   xlab("Covariates")+
   ylab("Coefficient estimate")+
   ggtitle("ACUTE")+

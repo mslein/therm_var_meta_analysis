@@ -32,12 +32,12 @@ count(acute,org_level,study_id)
 ##################################
 
 ##ACCLIMATION
-#model selection: adding in moderators to see if they improve AICc by more than 2
+#model selection: adding in moderators to see if they improve AICc 
 #best model by AIC 
 
 #################################################################
 ##ACCLIMATION
-#model selection: sequentially adding in moderators to see if they improve AICc by more than 2
+#model selection: sequentially adding in moderators to see if they improve AICc 
 
 acclim_int<-rma.mv(yi, vi, data=acclim, 
                    random = ~1 |  study_id/unique_species/response_id,
@@ -176,7 +176,7 @@ acclim_best<-rma.mv(yi, vi, data=acclim,
 
 
 ##ACUTE 
-#model selection: sequentially adding in moderators to see if they improve AICc by more than 2
+#model selection: sequentially adding in moderators to see if they improve AICc 
 acute_int <- rma.mv(yi, vi, data=acute,
                     random = ~1 | study_id/species/response_id,
                     method="REML") 

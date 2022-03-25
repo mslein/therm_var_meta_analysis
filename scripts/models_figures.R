@@ -647,7 +647,7 @@ p_big <- subset_acclim + interaction_acclim
 p_big2 <- subset_acute + interaction_acute
 #making the main text figure 
 interaction_fig <- p_big/p_big2
-ggsave("figure6.png", interaction_fig, dpi=700, width=10, height=9)
+ggsave("figure6.png", interaction_fig, dpi=300, width=10, height=9)
 
 ######SUPPLEMENTARY FIGURES#####
 #funnel plots 

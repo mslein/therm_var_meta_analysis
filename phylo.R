@@ -29,6 +29,16 @@ full_best <- metafor::rma.mv(yi, vi, data=full,
                      + experiment_type +metric,
                      random = ~1 | study_id/species/response_id,
                      method="REML") 
+###########
+#can't seem to find a way to get the phylogenetic correlation nicely in this model
+#might because there are several species missing in the correlation matrix....
+#full_phylo <- metafor::rma.mv(yi, vi,
+                            # random = list(~1 | phylo, ~1 | study_id, ~1 | response_id),
+                            # R = list(phylo=cor),
+                            # method="REML", data=full_df) 
+#phylo <- data.frame(family=family_total$family, genus=family_total$genus)
+#full_df <- left_join(full, phylo, by="genus")
+###########
 
 #42 genuses
 length(unique(full$genus))
@@ -51,7 +61,8 @@ family_taxa_missing_df <- data.frame(db=c("wiki", "wiki", "wiki", "hoskins2020",
                                      family=c("Culicidae", "Drosophilidae", "Calyptocephalellidae", 
                                               "Isotomidae", "Isotomidae"))
 #combining for the full set of families
-family_total <- rbind(family_taxa_df, family_taxa_missing_df) #32 unique families
+family_total <- rbind(family_taxa_df, family_taxa_missing_df) %>%
+  rename(genus=query)#32 unique families
 #rotl computation to get phylogenetic tree
 taxa_family <- tnrs_match_names(unique(family_total$family))
 #it would appear there are ott_ids for each of the families

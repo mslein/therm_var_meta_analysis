@@ -4,8 +4,7 @@
 ##loading necesssary libraries 
 pacman::p_load(metafor, tidyverse)
 #load data
-dat_acclim_0<- read_csv("acclimation_dummytherm_30jun.csv")
-dat_full_var_0 <- read_csv("metafor.csv")
+dat_full_var_0 <- read_csv("acute_raw.csv")
 
 ##wrangling calculations for acclimation data
 #make standardized SD columns based on N and SE vs SD
@@ -36,7 +35,7 @@ dat_acclim_ES<-dat_acclim_ES %>%
                                  TRUE ~ "rate"))
 
 
-write_csv(dat_acclim_ES, file = 'acclimation.csv')
+write_csv(dat_acclim_ES, file = 'acclimation_cleaned_24may.csv')
 
 ##wrangling calculations for full variability data
 #make standardized SD columns based on N and SE vs SD
@@ -112,6 +111,6 @@ dat_full_var_ES<-dat_full_var_ES %>%
                                             "Pyruvate kinase", "TAC", 
                                             "SOD", "glucose") ~ "biochemistry"))
 
-write_csv(dat_full_var_ES, file = 'acute_cleaned.csv')
+write_csv(dat_full_var_ES, file = 'acute_cleaned_24may.csv')
 
 

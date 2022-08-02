@@ -1,0 +1,102 @@
+resp_def,experiment_type,Metric,unk nown,metric_1,metric_2
+body mass,acute,morphology,,morphology,morphology
+carapace height,acute,morphology,,morphology,morphology
+carapace width,acute,morphology,,morphology,morphology
+developmental time,acute,life history,,life history,life history
+"ovary mass, dry",acute,morphology,,morphology,morphology
+"testes mass, dry",acute,morphology,,morphology,morphology
+development to stages 35-37,acute,life history,,life history,life history
+body length,acute,morphology,,morphology,morphology
+tail length,acute,morphology,,morphology,morphology
+productivity,acute,life history,,life history,life history
+egg to adult viability,acute,life history,,life history,life history
+dessication tolerance,acute,physiology,,physiology,physiology
+body (centroid) size,acute,morphology,,morphology,morphology
+startvation tolerance,acute,physiology,,physiology,physiology
+average cumulative number of eggs laid per female,acute,life history,,life history,life history
+percent females,acute,life history,,life history,life history
+incubation period,acute,life history,double check,life history,life history
+hatching success,acute,life history,,life history,life history
+total length,acute,morphology,,morphology,morphology
+mass,acute,morphology,,morphology,morphology
+survival,acute,life history,could be physiology depending on details,life history,life history
+development time,acute,life history,,life history,life history
+infestation rate,acute,life history,double check,life history,life history
+success of parasitism,acute,life history,double check,life history,life history
+days to first slough,acute,life history,,life history,life history
+aquatic speed,acute,physiology,movement,physiology,physiology
+distance covered,acute,life history,Movement,life history,life history
+snout-vent length,acute,morphology,,morphology,morphology
+abdomen length,acute,morphology,,morphology,morphology
+head length,acute,morphology,,morphology,morphology
+head width,acute,morphology,,morphology,morphology
+fore-limb length,acute,morphology,,morphology,morphology
+hind-limb length,acute,morphology,,morphology,morphology
+maximal length,acute,morphology,,morphology,morphology
+sprint speed,acute,physiology,Movement,physiology,physiology
+daily energy expenditure,acute,physiology,,physiology,physiology
+egg mass,acute,morphology,,morphology,morphology
+rate of change,acute,life history,double check,life history,life history
+oxidative damage,acute,physiology,,physiology,physiology
+TAC,acute,biochemistry,physiology,biochemistry,physiology
+total offspring,acute,life history,,life history,life history
+offspring per mating,acute,life history,,life history,life history
+wing centroid,acute,morphology,,morphology,morphology
+population growth rate,acute,life history,,life history,life history
+RMR,acute,physiology,,physiology,physiology
+Survival,acute,life history,double check,life history,life history
+Third instar to pupa,acute,life history,,life history,life history
+Third instar to adult,acute,life history,,life history,life history
+Adult eclosion to death,acute,life history,,life history,life history
+pupal weight,acute,morphology,,morphology,morphology
+adult weight,acute,morphology,,morphology,morphology
+egg to pupa,acute,life history,,life history,life history
+egg to adult,acute,life history,,life history,life history
+pupal shell weight,acute,morphology,,morphology,morphology
+Larval mortaility,acute,life history,double check,life history,life history
+Parasitism success,acute,life history,,life history,life history
+Mortaility,acute,life history,,life history,life history
+Hexokinase,acute,biochemistry,,biochemistry,physiology
+Pyruvate kinase,acute,biochemistry,,biochemistry,physiology
+SOD,acute,biochemistry,,biochemistry,physiology
+Catalase,acute,biochemistry,,biochemistry,physiology
+Hsp70,acute,biochemistry,,biochemistry,physiology
+group mean body weight,acute,morphology,,morphology,morphology
+body size,acute,morphology,,morphology,morphology
+final mass,acute,morphology,,morphology,morphology
+final length,acute,morphology,,morphology,morphology
+specific growth rate,acute,life history,,life history,life history
+feeding rate,acute,life history,,life history,life history
+feeding efficiency,acute,physiology,,physiology,physiology
+longevity,acute,life history,,life history,life history
+Sqrt of available energy,acute,physiology,double check,physiology,physiology
+Energy consumption,acute,physiology,,physiology,physiology
+Sqrt Cellular energy allocation (CEA),acute,physiology,,physiology,physiology
+median days to bolt,acute,life history,,life history,life history
+blade length/total leaf length,acute,morphology,,morphology,morphology
+hypocotyl length,acute,morphology,,morphology,morphology
+body weight,acute,morphology,,morphology,morphology
+cortisol,acute,biochemistry,,biochemistry,physiology
+glucose,acute,biochemistry,,biochemistry,physiology
+maximal swimming speed,acclimation,physiology,movement,physiology,max
+CT max,acclimation,physiology,,physiology,max
+Umax,acclimation,physiology,,physiology,max
+RMR,acclimation,physiology,,physiology,physiology
+LDH activity,acclimation,biochemistry,,biochemistry,physiology
+CS activity,acclimation,biochemistry,,biochemistry,physiology
+CCO activity,acclimation,biochemistry,,biochemistry,physiology
+Oxygen consumption,acclimation,physiology,,physiology,physiology
+Maximum burst swim speed,acclimation,physiology,movement,physiology,max
+Ucrit,acclimation,physiology,,physiology,max
+CTmin,acclimation,physiology,,physiology,min
+CTmax,acclimation,physiology,,physiology,max
+ULT50,acclimation,physiology,,physiology,max
+Scope of thermal tolerance (CTmax - CTmin),acclimation,physiology,,physiology,physiology
+Topt,acclimation,physiology,,physiology,physiology
+Performance breadth (Tbr),acclimation,physiology,,physiology,physiology
+Thermal preference,acclimation,physiology,,physiology,physiology
+Tpref,acclimation,physiology,,physiology,physiology
+Speed,acclimation,physiology,movement,physiology,physiology
+Time to heat knockdown,acclimation,physiology,,physiology,physiology
+LTmax,acclimation,physiology,,physiology,max
+LTmin,acclimation,physiology,,physiology,min

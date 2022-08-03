@@ -21,7 +21,7 @@ dat_ES2<-dat_ES %>%
   filter (!is.na(yi)) %>%
   unite(original_name, c(genus, species), sep = " ", remove = FALSE) %>%
   mutate(original_name = tolower(original_name))
-#selecting only organismal, adult, and juevnile organisms, and species that didn't have phylogenies
+#selecting only organismal level responses, adult, and juvenile organisms, and species that did have phylogenies
 dat_ES_final<- dat_ES2 %>%
   filter(org_level %in% c("0")) %>%
   filter(size %in% c("1", "2")) %>%
@@ -219,7 +219,7 @@ p2 <-dat_ES_final%>%
           axis.title=element_text(size=20,face="bold"))
 
 
-p4 <-dat_ES_final%>%
+p3 <-dat_ES_final%>%
   filter(yi <80) %>%
   group_by(ecosystem) %>%
   summarise(mean=mean(yi), 
@@ -241,7 +241,7 @@ p4 <-dat_ES_final%>%
   theme(axis.text=element_text(size=20),
         axis.title=element_text(size=20,face="bold"))
 
-p5 <-dat_ES_final%>%
+p4 <-dat_ES_final%>%
   filter(yi <80) %>%
   group_by(trait_directionality) %>%
   summarise(mean=mean(yi), 
@@ -263,7 +263,7 @@ p5 <-dat_ES_final%>%
   theme(axis.text=element_text(size=20),
         axis.title=element_text(size=20,face="bold"))
 
-p0 / p1 / p2 / p4 / p5
+p0 / p1 / p2 / p3 / p4
 
 #Figure 4
 mean_temp<- dat_ES_final_2 %>%
@@ -315,7 +315,6 @@ duration<- dat_ES_final_2 %>%
 #######################
 ########SI Figures#####
 #######################
-
 
 
 #model comparison

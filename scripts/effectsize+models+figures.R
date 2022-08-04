@@ -51,6 +51,7 @@ dat_ES_final_2 <- left_join(dat_ES_final, taxa_df, by="original_name") %>%
   mutate(duration_standard = case_when(duration_units %in% c("weeks") ~ duration*7, 
                                        duration_units %in% c("hours") ~ duration/24,
                                        TRUE ~ duration))
+
 ####candidate models
 #full model
 full_mod<-rma.mv(yi, vi, 
@@ -172,7 +173,8 @@ p0 <-dat_ES_final%>%
   xlab("Experiment type")+
   ylab("")+
   theme(axis.text=element_text(size=20),
-        axis.title=element_text(size=20,face="bold"))
+        axis.title=element_text(size=20,face="bold"))+
+  geom_label(aes(label=n),nudge_y=1.5, size=8)
 
 p1 <-dat_ES_final%>%
   filter(yi <80) %>%
@@ -194,7 +196,8 @@ p1 <-dat_ES_final%>%
   ylab("")+
   scale_x_discrete(labels = c("larval",'juvenile','adult'))+
   theme(axis.text=element_text(size=20),
-        axis.title=element_text(size=20,face="bold"))
+        axis.title=element_text(size=20,face="bold"))+
+  geom_label(aes(label=n),nudge_y=1.9, size=8)
 
 p2 <-dat_ES_final%>%
   filter(yi <80) %>%
@@ -216,7 +219,8 @@ p2 <-dat_ES_final%>%
   ylab("")+
   scale_x_discrete(labels = c("small",'medium'))+
     theme(axis.text=element_text(size=20),
-          axis.title=element_text(size=20,face="bold"))
+          axis.title=element_text(size=20,face="bold"))+
+  geom_label(aes(label=n),nudge_y=1.5, size=8)
 
 
 p3 <-dat_ES_final%>%
@@ -239,7 +243,8 @@ p3 <-dat_ES_final%>%
   xlab("Ecosystem")+
   ylab("")+
   theme(axis.text=element_text(size=20),
-        axis.title=element_text(size=20,face="bold"))
+        axis.title=element_text(size=20,face="bold"))+
+  geom_label(aes(label=n),nudge_y=1.5, size=8)
 
 p4 <-dat_ES_final%>%
   filter(yi <80) %>%
@@ -261,7 +266,8 @@ p4 <-dat_ES_final%>%
   xlab("Trait directionality")+
   ylab("Effect size")+
   theme(axis.text=element_text(size=20),
-        axis.title=element_text(size=20,face="bold"))
+        axis.title=element_text(size=20,face="bold"))+
+  geom_label(aes(label=n),nudge_y=1.5, size=8, colour="black")
 
 p0 / p1 / p2 / p3 / p4
 
@@ -278,7 +284,8 @@ mean_temp<- dat_ES_final_2 %>%
   theme(legend.position="none")+
   theme(axis.text=element_text(size=20),
         axis.title=element_text(size=20,face="bold"))+
-  geom_abline(intercept = 0.7056, slope = 0.0139, color="black", size=1)
+  geom_abline(intercept = 0.7056, slope = 0.0139, color="black", size=1)+
+  geom_label(x=28, y=9, aes(label="n=1620"), size=8, colour="black")
 
 
 flux_range <- dat_ES_final_2 %>%
@@ -293,7 +300,8 @@ flux_range <- dat_ES_final_2 %>%
   theme(legend.position="none")+
   theme(axis.text=element_text(size=20),
         axis.title=element_text(size=20,face="bold"))+
-  geom_abline(intercept = 0.7056, slope = -0.0145, color="black", size=1)
+  geom_abline(intercept = 0.7056, slope = -0.0145, color="black", size=1)+
+  geom_label(x=16, y=9, aes(label="n=1620"), size=8, colour="black")
 
 mean_temp + flux_range
 
@@ -310,7 +318,8 @@ duration<- dat_ES_final_2 %>%
   theme(legend.position="none")+
   theme(axis.text=element_text(size=20),
         axis.title=element_text(size=20,face="bold"))+
-  geom_abline(intercept = 0.7056, slope = -0.0164 , color="black", size=1)
+  geom_abline(intercept = 0.7056, slope = -0.0164 , color="black", size=1)+
+  geom_label(x=150, y=9, aes(label="n=1620"), size=8, colour="black")
 
 #######################
 ########SI Figures#####
@@ -348,7 +357,9 @@ full_mod$sigma2[2]/sum(full_mod$sigma2[1], full_mod$sigma2[2], full_mod$sigma2[3
 #response heterogeneity 
 full_mod$sigma2[3]/sum(full_mod$sigma2[1], full_mod$sigma2[2], full_mod$sigma2[3]) #0.0003103212
 
+#calculating fail safe number
+fsn(yi, vi, data=dat_ES_final_2,type="Rosenberg") #647101
 
-
-
-
+#correlation between age and size
+res0 <- cor.test(dat_ES_final_2$exp_age, dat_ES_final_2$size, 
+                method = "pearson")

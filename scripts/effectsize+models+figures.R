@@ -30,6 +30,14 @@ dat_ES_final<- dat_ES2 %>%
                               "metacatharsius opacus")) %>%
   mutate(ecosystem = case_when(environment == "terrestrial" ~ "terrestrial", 
          TRUE ~ "aquatic/marine"))
+
+dat_ES_manu <- dat_ES2 %>%
+  filter(larger_group %in% c("0"))
+
+count(dat_ES_manu, study_id)
+
+count(dat_ES2, org_level)
+   
 #getting the phylogenies
 taxa <- tnrs_match_names(as.character(unique(dat_ES_final$original_name)))
 taxa_df <- taxa %>% 
@@ -275,6 +283,7 @@ p0 / p1 / p2 / p3 / p4
 mean_temp<- dat_ES_final_2 %>%
   filter(between(yi, -10, 10)) %>%
   ggplot(aes(x=mean_temp_constant, y=yi, colour=mean_temp_constant))+
+  geom_hline(yintercept = 0, linetype='dashed')+
   geom_point(alpha=0.5, size=2)+
   scale_colour_viridis(option="D")+
   #geom_smooth(method="lm")+
@@ -291,6 +300,7 @@ mean_temp<- dat_ES_final_2 %>%
 flux_range <- dat_ES_final_2 %>%
   filter(between(yi, -10, 10)) %>%
   ggplot(aes(x=flux_range, y=yi, colour=flux_range))+
+  geom_hline(yintercept = 0, linetype='dashed')+
   geom_point(alpha=0.5, size=2)+
   scale_colour_viridis(option="D")+
   #geom_smooth(method="lm")+
@@ -303,13 +313,12 @@ flux_range <- dat_ES_final_2 %>%
   geom_abline(intercept = 0.7056, slope = -0.0145, color="black", size=1)+
   geom_label(x=16, y=9, aes(label="n=1620"), size=8, colour="black")
 
-mean_temp + flux_range
-
 #Figure 5
 duration<- dat_ES_final_2 %>%
   filter(between(yi, -10, 10)) %>%
   #filter(between(duration, 0, 200)) %>%
   ggplot(aes(x=duration_standard, y=yi, colour=duration_standard))+
+  geom_hline(yintercept = 0, linetype='dashed')+
   geom_point(alpha=0.5, size=2)+
   scale_colour_viridis(option="D")+
   theme_bw()+
@@ -320,6 +329,8 @@ duration<- dat_ES_final_2 %>%
         axis.title=element_text(size=20,face="bold"))+
   geom_abline(intercept = 0.7056, slope = -0.0164 , color="black", size=1)+
   geom_label(x=150, y=9, aes(label="n=1620"), size=8, colour="black")
+
+mean_temp + flux_range + duration
 
 #######################
 ########SI Figures#####

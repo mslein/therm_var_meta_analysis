@@ -1,31 +1,37 @@
 ﻿decoding ,code,meaning,,,,,,,notes
 resp_id,,,,,,,,,unique response within study 
+unique_species,,,,,,,,,unique species within a study 
 study_id,,,,,,,,,author and year 
+origin,,,,,,,,,where the data in the study were sourced from (figure or table number)
 org_level,"0,1,2,3","individual, population, community, ecosystem ",,,,,,,level of biological organization 
-flux_type,"0,1,2,3,4","constant, diurnal, red, white other",,,,,,,"the type of flucuation, constant=no variability in temp, diurnal=daily periodic fluctuation, white=stochastic manipulation of environmental color, red = autocorrelated manipulation of environmental color"
 flux_pattern,"0,1","pulse, ramping",,,,,,,abrupt temp range (pulse) or gradual (ramping)
-mean_temp,,,,,,,,,mean temperature (degrees C)
+secondary temp,,,,,,,,,"additional temperature treatment: for acclimation studies, temperature exposed to after acclimation phase; for acute studies, temperature stored at before the assay"
+mean_temp_constant,,,,,,,,,mean temperature (degrees C)
+flux_range,,,,,,,,,magnitude of fluctuation (max temp degrees C - min temp degrees C)
 period_flux,,,,,,,,,period of fluctuation (hours)
 resp_def,,,,,,,,,definition of experimental result 
 resp_units,,,,,,,,,units of response
-response,,,,,,,,,reported response value
+constant_resp,,,,,,,,,reported response value for constant treatment
+flux_resp,,,,,,,,,reported response value for fluctuating treatment
+constant_variance,,,,,,,,,value of respective variance metrics for constant treatments 
+flux_variance,,,,,,,,,value of respective variance metrics for fluctuating treatments 
+constant_samp,,,,,,,,,individuals used in response value for constant treatment
+flux_samp,,,,,,,,,individuals used in response value for fluctuating treatment
 resp_quality ,"0,1","table, figure ",,,,,,,source of extracted value
-samp_size,,,,,,,,,individuals used in response value
 variance_type ,"0,1","SEM, std dev.",,,,,,,type of variance metrics
-variance ,,,,,,,,,value of respective variance metrics 
 genus,,,,,,,,,genus of organism 
 species ,,,,,,,,,species of organism 
-exp_age,"0,1,2","pre-juvenile, juvenile, adult?",,,,,,,experimental age class of organism
-size,"0,1,2,3","very small, small, medium, large ",,,,,,,size class of organism 
+larger_group,"0,1,2,3","plant, animal, fungi, bacteria ",,,,,,,broader classifications of organisms above order/genus/species 
+exp_age,"0,1,2","larval, juvenile, adult",,,,,,,experimental age class of organism
+size,"0,1,2,3,4","extra small, small, medium, large, extra-large ",,,,,,,size class of organism 
 add_covariate,,"species richness, ecosystem?",,,,,,,additional covariate description
 add_covariate_value ,,,,,,,,,value of additional covariate
-add_info,,,,,,,,,units of additional covariate
 extra_covariate ,,,,,,,,,second covariate description
 extra_value,,,,,,,,,value of second covariate
-add_info,,,,,,,,,units of second covariate
-environment,"aquatic, terrestrial ",,,,,,,,environment type where organism is from
-larger_group,"0,1,2,3","plant, animal, fungi, bacteria ",,,,,,,broader classifications of organisms above order/genus/species 
+environment,"aquatic, terrestrial, marine",,,,,,,,environment type where organism is from
 time_point ,,,,,,,,,days into epxeriment response was recorded 
 time_units,,,,,,,,,time point units
 stressful,"y, n","yes, no",,,,,,,whether or not temperature was thermally stressful 
 same_mean,"y, n","yes, no",,,,,,,if the constant and fluctuatin treatments had the same mean (within 1 C difference)
+trait_directionality,"positive, negative","positive, negative",,,,,,,whether the a large effect size for a response metric precipitates negative biological effects (negative trait directionality) or positive biological effects (positive trait directionality)
+shared_control,,,,,,,,,"indicates whether there were shared control treatments across rows within the same study, unique values for each new control"

@@ -161,6 +161,167 @@ mod13 <-rma.mv(yi, vi,
 #########Figures#########
 #########################
 
+mod_coef<- as.data.frame(coef(summary(full_mod))) %>%
+  tibble::rownames_to_column("covariates") %>%
+  rename(SMD = "estimate") %>%
+  mutate(type = case_when(covariates %in% c("as.factor(exp_age)1", "as.factor(exp_age)2") ~ "Age", 
+                          covariates %in% c("as.factor(size)2") ~ "Body size",
+                          covariates %in% c("trait_directionalitypositive") ~ "Trait directionality", 
+                          covariates %in% c("experiment_typeacute") ~ "acute", 
+                          covariates %in% c("I(flux_range - mean(flux_range))", 
+                                            "I(mean_temp_constant - mean(mean_temp_constant))", 
+                                            "I(secondary_temp - mean(secondary_temp))", 
+                                            "I(secondary_temp - mean(secondary_temp))") ~ "Temperature", 
+                          covariates %in% c("ecosystemterrestrial") ~ "Ecosystem", 
+                          covariates %in% c("vi") ~ "Variance",
+                          covariates %in% c("duration_standard") ~ "Duration", 
+                          covariates %in% c("intrcpt") ~ "Intercept")) %>%
+  mutate(estimate_add = case_when(type %in% c("Intercept", "Duration", "Temperature") ~ SMD, 
+                                  TRUE ~ SMD + 0.705646500),
+         ciub_add = case_when(type %in% c("Intercept", "Duration", "Temperature") ~ ci.ub, 
+                                  TRUE ~ ci.ub + 0.705646500), 
+         cilb_add = case_when(type %in% c("Intercept", "Duration", "Temperature") ~ ci.lb, 
+                                  TRUE ~ ci.lb + 0.705646500),
+         log_est =log(estimate_add+1))
+
+exp_mod <- mod_coef %>%
+  filter(type %in% c("acute"))
+
+dat_ES_final_2_exp <- dat_ES_final_2 %>%
+  mutate(yi_plus=yi+1) %>%
+  filter(experiment_type == "acute")
+
+a <- ggplot()+
+  geom_hline(yintercept = 0, linetype='dashed')+
+  #geom_violin(data=dat_ES_final_2_exp, aes(x=experiment_type, y=log(yi_plus)), width = 0.15, fill="#440154")+
+  geom_jitter(data=dat_ES_final_2_exp, aes(x=experiment_type, y=log(yi_plus)), width = 0.15, alpha=0.1, colour="#440154")+
+  geom_pointrange(data=exp_mod, aes(x=type, y=SMD, ymin=SMD-se, ymax=SMD+se), colour="red")+
+  ylim(-5,7)+
+  coord_flip()+
+  theme_bw()+
+  xlab("Experiment")+
+  ylab("")+
+  theme(axis.text=element_text(size=20),
+        axis.title=element_text(size=20,face="bold"))
+  #geom_label(aes(label=n),nudge_y=1.5, size=8)
+
+age_mod <- mod_coef %>%
+  filter(type %in% c("Age")) %>%
+  mutate(type2 = case_when(covariates %in% c("as.factor(exp_age)2") ~ "2",
+                           covariates %in% c("as.factor(exp_age)1") ~ "1"))
+
+dat_ES_final_2_age <- dat_ES_final_2 %>%
+  mutate(yi_plus=yi+1) %>%
+  filter(exp_age %in% c("1", "2"))
+
+b <- ggplot()+
+  geom_hline(yintercept = 0, linetype='dashed')+
+  #geom_violin(data=dat_ES_final_2_age, aes(x=as.factor(exp_age), y=log(yi_plus)), width = 0.15, fill="#414487")+
+  geom_jitter(data=dat_ES_final_2_age, aes(x=as.factor(exp_age), y=log(yi_plus)), width = 0.15, alpha=0.1, colour="#414487")+
+  geom_pointrange(data=age_mod, aes(x=type2, y=SMD, ymin=SMD-se, ymax=SMD+se), colour="red")+
+  ylim(-5,7)+
+  coord_flip()+
+  theme_bw()+
+  xlab("Age")+
+  ylab("")+
+  theme(axis.text=element_text(size=20),
+        axis.title=element_text(size=20,face="bold"))
+
+size_mod <- mod_coef %>%
+  filter(covariates == "as.factor(size)2") %>%
+  mutate(type2 = case_when(covariates %in% c("as.factor(size)2") ~ "2"))
+
+dat_ES_final_2_size <- dat_ES_final_2 %>%
+  mutate(yi_plus=yi+1) %>%
+  filter(size %in% c("2"))
+
+
+c <- ggplot()+
+  geom_hline(yintercept = 0, linetype='dashed')+
+  #geom_violin(data=dat_ES_final_2_size, aes(x=as.factor(size), y=log(yi_plus)), width = 0.15, fill="#2a788e")+
+  geom_jitter(data=dat_ES_final_2_size, aes(x=as.factor(size), y=log(yi_plus)), width = 0.15, alpha=0.1, colour="#2a788e")+
+  geom_pointrange(data=size_mod, aes(x=type2, y=SMD, ymin=SMD-se, ymax=SMD+se), colour="red")+
+  ylim(-5,7)+
+  coord_flip()+
+  theme_bw()+
+  xlab("Size")+
+  ylab("")+
+  theme(axis.text=element_text(size=20),
+        axis.title=element_text(size=20,face="bold"))
+
+
+ecosystem_mod <- mod_coef %>%
+  filter(covariates == "ecosystemterrestrial") %>%
+  mutate(type2 = case_when(covariates %in% c("ecosystemterrestrial") ~ "terrestrial"))
+
+dat_ES_final_2_eco <- dat_ES_final_2 %>%
+  mutate(yi_plus=yi+1) %>%
+  filter(ecosystem %in% c("terrestrial"))
+
+d <- ggplot()+
+  geom_hline(yintercept = 0, linetype='dashed')+
+  #geom_violin(data=dat_ES_final_2_eco, aes(x=ecosystem, y=log(yi_plus)), width = 0.15, fill="#22a884")+
+  geom_jitter(data=dat_ES_final_2_eco, aes(x=ecosystem, y=log(yi_plus)), width = 0.15, alpha=0.1, colour="#22a884")+
+  geom_pointrange(data=ecosystem_mod, aes(x=type2, y=SMD, ymin=SMD-se, ymax=SMD+se), colour="red")+
+  ylim(-5,7)+
+  coord_flip()+
+  theme_bw()+
+  xlab("Ecosystem")+
+  ylab("")+
+  theme(axis.text=element_text(size=20),
+        axis.title=element_text(size=20,face="bold"))
+
+trait_mod <- mod_coef %>%
+  filter(covariates == "trait_directionalitypositive") %>%
+  mutate(type2 = case_when(covariates %in% c("trait_directionalitypositive") ~ "positive"))
+
+dat_ES_final_2_trait <- dat_ES_final_2 %>%
+  mutate(yi_plus=yi+1) %>%
+  filter(trait_directionality %in% c("positive"))
+
+e <- ggplot()+
+  geom_hline(yintercept = 0, linetype='dashed')+
+  #geom_violin(data=dat_ES_final_2_trait, aes(x=trait_directionality, y=log(yi_plus)), width = 0.15, fill="#7ad151")+
+  geom_jitter(data=dat_ES_final_2_trait, aes(x=trait_directionality, y=log(yi_plus)), width = 0.15, alpha=0.1, colour="#7ad151")+
+  geom_pointrange(data=trait_mod, aes(x=type2, y=SMD, ymin=SMD-se, ymax=SMD+se), colour="red")+
+  ylim(-5,7)+
+  coord_flip()+
+  theme_bw()+
+  xlab("Trait")+
+  ylab("")+
+  theme(axis.text=element_text(size=20),
+        axis.title=element_text(size=20,face="bold"))
+
+overall_mod <- mod_coef %>%
+  filter(covariates == "intrcpt") %>%
+  mutate(type2 = case_when(covariates %in% c("intrcpt") ~ "intercept"))
+
+dat_ES_final_2_intr <- dat_ES_final_2 %>%
+  mutate(yi_plus=yi+1, 
+         intercept="intercept") 
+
+f <- ggplot()+
+  geom_hline(yintercept = 0, linetype='dashed')+
+  #geom_violin(data=dat_ES_final_2_intr, aes(x=intercept, y=log(yi_plus)), width = 0.15, fill="#fde725")+
+  geom_jitter(data=dat_ES_final_2_intr, aes(x=intercept, y=log(yi_plus)), width = 0.15, alpha=0.1, colour="#fde725")+
+  geom_pointrange(data=overall_mod, aes(x=type2, y=SMD, ymin=SMD-se, ymax=SMD+se), colour="red")+
+  ylim(-5,7)+
+  coord_flip()+
+  theme_bw()+
+  ylab("")+
+  xlab("")+
+  theme(axis.text=element_text(size=20),
+        axis.title=element_text(size=20,face="bold"))
+
+f/a/b/c/d/e
+
+
+
+
+
+
+
+
 #Figure 3
 p0 <-dat_ES_final%>%
   filter(yi <80) %>%

@@ -1,0 +1,19 @@
+covariates,estimate,se,zval,pval,ci.lb,ci.ub
+intrcpt,0.083,1.899,0.044,0.965,-3.64,3.806
+I(flux_range - mean(flux_range)),-0.011,0.002,-6.713,0,-0.014,-0.008
+I(mean_temp_constant - mean(mean_temp_constant)),0.01,0.002,6.526,0,0.007,0.013
+experiment_typeacclimation,0.083,0.032,2.588,0.01,0.02,0.145
+duration_standard,-0.022,0.001,-24.123,0,-0.024,-0.02
+exp_age0,0.142,0.027,5.304,0,0.09,0.195
+exp_age2,0.231,0.032,7.315,0,0.169,0.293
+size2,0.145,0.357,0.407,0.684,-0.554,0.845
+ecosystemaquatic/marine,0.499,0.522,0.956,0.339,-0.524,1.522
+trait_directionalitynegative,-0.024,0.041,-0.58,0.562,-0.104,0.056
+sqrt_ni_1,0.014,0.125,0.113,0.91,-0.231,0.26
+I(flux_range - mean(flux_range)):I(mean_temp_constant - mean(mean_temp_constant)),0.009,0,22.326,0,0.008,0.009
+I(flux_range - mean(flux_range)):experiment_typeacclimation,-0.008,0.004,-2.184,0.029,-0.016,-0.001
+I(mean_temp_constant - mean(mean_temp_constant)):experiment_typeacclimation,-0.006,0.003,-2.299,0.021,-0.012,-0.001
+experiment_typeacclimation:exp_age0,-0.384,0.139,-2.77,0.006,-0.655,-0.112
+experiment_typeacclimation:exp_age2,-0.299,0.093,-3.21,0.001,-0.482,-0.117
+experiment_typeacclimation:size2,0.268,0.07,3.848,0,0.131,0.404
+experiment_typeacclimation:trait_directionalitynegative,0.29,0.055,5.235,0,0.181,0.398

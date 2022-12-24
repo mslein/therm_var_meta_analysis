@@ -1,5 +1,5 @@
 pacman::p_load(tidyverse)
-prisma <- read_csv("litsearch_subgroups14sept21 copy.csv") %>%
+prisma <- read_csv("metadata/litsearch_subgroups14sept21 copy.csv") %>%
   mutate(notes_tidy = case_when(notes %in% c("background", "review", 
                                                     "review/synthesis", "book") ~ "reviews/background", 
                                        notes %in% c("modeling", "modelling") ~ "modeling", 
@@ -13,8 +13,7 @@ prisma <- read_csv("litsearch_subgroups14sept21 copy.csv") %>%
                                                     "no error reported") ~ "no error", 
                                        notes %in% c("non-biologically relevant", 
                                                     "not extractable") ~ "not relevant",
-                                       notes %in% c("non-lab") ~ "uncontrolled var",
-                                       notes %in% c("non-english", "paywall") ~ "non-english", 
+                                       notes %in% c("non-lab") ~ "uncontrolled var", 
                                       TRUE  ~ "greater diff"))
 tally <- count(prisma, notes_tidy) 
 sum(tally$n)

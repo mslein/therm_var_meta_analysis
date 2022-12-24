@@ -1,0 +1,261 @@
+trait_directional,resp_def,n
+positive,abdomen length,2
+positive,adult body mass,4
+positive,Adult eclosion to death,6
+positive,adult longevity,10
+positive,adult period,4
+positive,adult weight,6
+positive,aquatic speed,1
+positive,average cumulative number of eggs laid per female,2
+positive,body (centroid) size,2
+positive,body length,4
+positive,body mass,25
+positive,body size,3
+positive,body weight,1
+positive,carapace height,4
+positive,Carapace length,4
+positive,carapace width,4
+positive,Carapace width,4
+positive,crawling speed,1
+positive,CT max,5
+positive,Ctmax,1
+positive,CTmax,72
+positive,daily feed intake rate,4
+positive,daily oviposition rate,9
+positive,days to first slough,1
+positive,days to pupation,4
+positive,dessication tolerance,2
+positive,development rate,15
+positive,development time,4
+positive,developmental time,11
+positive,distance covered,1
+positive,dorsal shield size,9
+positive,egg to adult,3
+positive,egg to adult viability,10
+positive,egg to pupa,3
+positive,emergence rate,6
+positive,estimated lifetime of reproductive effort,2
+positive,eye diameter,3
+positive,FA eye diameter difference,3
+positive,FA pectoral fin length difference,3
+positive,FA pectoral fin rays,3
+positive,FA pelvic fin length difference,3
+positive,FA pelvic fin rays,3
+positive,fecundity,31
+positive,feeding efficiency,2
+positive,feeding intake,1
+positive,feeding rate,11
+positive,female fecundity,5
+positive,female longevity,2
+positive,fertility,4
+positive,final body weight,4
+positive,final length,2
+positive,final mass,2
+positive,flight distance,4
+positive,flight duration,4
+positive,flight velocity,4
+positive,food conversion efficiency,4
+positive,fore-limb length,2
+positive,generation time,5
+positive,Generation time,1
+positive,group mean body weight,3
+positive,growth,2
+positive,growth rate,35
+positive,hatching weight after two months,3
+positive,Hatching wet mass,4
+positive,hatchling mass,2
+positive,hatchling weight,3
+positive,head area,1
+positive,head length,2
+positive,head width,3
+positive,Heat knockdown time,6
+positive,hind-limb length,2
+positive,hypocotyl length,2
+positive,Incubation length,5
+positive,incubation period,1
+positive,intrinsic rate of increase,5
+positive,larval body length,3
+positive,length,3
+positive,length of pupation,2
+positive,lifetime fecundity (per female),2
+positive,longevity,42
+positive,LT50,3
+positive,LTmax,1
+positive,mass,5
+positive,mass at pupa,4
+positive,mating frequency,2
+positive,mating percentage,2
+positive,mating success,4
+positive,maximal length,2
+positive,Maximal swimming distance,4
+positive,maximal swimming speed,6
+positive,Maximum burst swim speed,10
+positive,meal energy content,1
+positive,net reproductive rate,5
+positive,Net reproductive rate,1
+positive,number of eggs,6
+positive,offspring per mating,2
+positive,ovarian development grade,2
+positive,"ovary mass, dry",4
+positive,oviposition period,11
+positive,pectoral fin length,3
+positive,pectoral fin rays,3
+positive,pelvic fin length,3
+positive,pelvic fin rays,3
+positive,Performance breadth (Tbr),1
+positive,plastron dark colouration,2
+positive,plastron length,2
+positive,pre-pupal mass,10
+positive,productivity,6
+positive,proportion of females ovipositing in first two days,5
+positive,proportion of hatched eggs,4
+positive,proportion of larvae surviving to adult eclosion,3
+positive,proportion of larvae surviving to emergence,3
+positive,pupal body mass,4
+positive,pupal mass,2
+positive,pupal shell weight,3
+positive,pupal weight,10
+positive,pupation rate,5
+positive,reproductive output,2
+positive,residual yolk mass,2
+positive,righting response,1
+positive,Scope of thermal tolerance (CTmax - CTmin),1
+positive,Scope of VO2 peak,1
+positive,snout-vent length,4
+positive,specific growth rate,12
+positive,Speed,8
+positive,sprint speed,2
+positive,Sqrt of available energy,32
+positive,startvation tolerance,2
+positive,Straight carapace length,1
+positive,swimming performance (stroke frequency),1
+positive,swimming performance (time swimming),1
+positive,tail girth,2
+positive,tail length,6
+positive,"testes mass, dry",4
+positive,Third instar to adult,3
+positive,Third instar to pupa,3
+positive,tibia size,2
+positive,Time to heat knockdown,2
+positive,time to pupa,4
+positive,time to reach pupation,2
+positive,Topt,1
+positive,total byssal threads,2
+positive,total length,4
+positive,total offspring,3
+positive,Tpeak,1
+positive,track position,2
+positive,Ucrit,10
+positive,ULT50,36
+positive,Umax,24
+positive,upper thermal limit,3
+positive,VO2 peak,1
+positive,walking speed,52
+positive,wing centroid,2
+positive,wing size,20
+negative,1st instar development period,3
+negative,2nd instar development period,3
+negative,3rd instard development period,3
+negative,4th instar development period,3
+negative,5th instar development period,3
+negative,acid phosphatase activities,1
+negative,acid phosphate activities,8
+negative,adult female development period,3
+negative,adult female development time,3
+negative,adult male development period,3
+negative,adult male development time,3
+negative,adult preoviposition period,13
+negative,alkaline phosphatase,9
+negative,anibacterial activity,6
+negative,ARHGAP5 gene expression,9
+negative,BCL6 gene expression,9
+negative,Catalase,3
+negative,CCO activity,24
+negative,Chill coma recovery time,6
+negative,cortisol,1
+negative,CS activity,24
+negative,CTmin,55
+negative,cumulative nymphal development time,8
+negative,deutonymph developmental duration,39
+negative,development,4
+negative,development duration,10
+negative,development time,17
+negative,development time to adult eclosion,2
+negative,development time to emergence,2
+negative,developmental time,22
+negative,DLG1 gene expression,9
+negative,duration,1
+negative,egg development period,3
+negative,egg developmental duration,40
+negative,egg developmental time,3
+negative,egg mean development time,3
+negative,egg to adult duration,20
+negative,energetic cost of digestions (SDA),1
+negative,Energy consumption,32
+negative,first instar development time,3
+negative,first instar developmental tim,4
+negative,first nymphal instar development time,4
+negative,fourth instar developmental time,3
+negative,gh gene expression,1
+negative,glucose,1
+negative,hemolymph glucose content,4
+negative,hexokinase,4
+negative,Hexokinase,3
+negative,HNRNPK gene expression,9
+negative,Hsp70,3
+negative,HSP70 expression level,4
+negative,hsp70 gene expression,1
+negative,igf1 gene expression,1
+negative,incubation duration,1
+negative,Incubation length,3
+negative,larva developmental duration,38
+negative,larvae mean development time,3
+negative,larval period,2
+negative,LDH activity,24
+negative,lethal thermal limit,3
+negative,LTmax,1
+negative,LTmin,2
+negative,lysozyme activity,9
+negative,mass reduction during pupation,4
+negative,median days to bolt,15
+negative,mortality,4
+negative,NFATF5 gene expression,9
+negative,number of retained unfertilized eggs,2
+negative,oviposition days,10
+negative,oviposition period,1
+negative,oxidative damage,1
+negative,Oxygen consumption,10
+negative,parasitism rate,1
+negative,PHA response (swelling),2
+negative,phenoloxidase (PO) like activity,6
+negative,pre-adult development period,3
+negative,pre-productive period,1
+negative,preadult period,4
+negative,preovipoosition period,4
+negative,protonymph developmental duration,39
+negative,pupa development time,1
+negative,pupae development time,4
+negative,pupae mean development time,3
+negative,pupal periods,2
+negative,pyruvate kinase,4
+negative,Pyruvate kinase,3
+negative,RANGAP1 gene expression,9
+negative,relative hsp90 fold change expression,2
+negative,righting time,2
+negative,RMR,25
+negative,SDA coefficient,1
+negative,second instar developmental time,7
+negative,second nymphal instar development time,4
+negative,sex ratio,4
+negative,SOD,3
+negative,Supercooling point,6
+negative,TAC,1
+negative,third instar developmental time,7
+negative,third nymphal instar development time,4
+negative,total development time,3
+negative,total immature development duration,20
+negative,total preoviposition period,13
+negative,TRAF3IP gene expression,9
+negative,triglyceride content,4
+negative,wandering development time,3
+negative,wing aspect ratio,20

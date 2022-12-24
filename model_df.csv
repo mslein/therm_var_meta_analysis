@@ -1,0 +1,21 @@
+covariates,coef(final_model)
+intrcpt,-0.186
+I(flux_range - mean(flux_range)),-0.01
+I(mean_temp_constant - mean(mean_temp_constant)),-0.061
+experiment_typeacclimation,-0.073
+I(secondary_temp - mean(secondary_temp)),0
+log10(duration_standard),-0.052
+exp_age0,-0.154
+exp_age2,-0.004
+size2,-0.311
+size3,-0.062
+trait_directionalnegative,-0.034
+ni_1,1.511
+I(flux_range - mean(flux_range)):I(mean_temp_constant - mean(mean_temp_constant)),-0.002
+experiment_typeacclimation:I(flux_range - mean(flux_range)),0.031
+experiment_typeacclimation:I(mean_temp_constant - mean(mean_temp_constant)),0.057
+exp_age0:experiment_typeacclimation,0.169
+exp_age2:experiment_typeacclimation,0.207
+experiment_typeacclimation:size2,0.255
+experiment_typeacclimation:size3,-0.226
+experiment_typeacclimation:trait_directionalnegative,-0.188
